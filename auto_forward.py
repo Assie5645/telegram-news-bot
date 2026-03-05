@@ -1,7 +1,8 @@
 from telethon import TelegramClient, events
 
-api_id = 30133788
-api_hash = "1f2d2d024eaafe22909fbb1131e1f084"
+# ===== API DETAILS =====
+api_id = 30133788         # your api_id
+api_hash = "1f2d2d024eaafe22909fbb1131e1f084" # your api_hash
 
 # ===== CHANNELS =====
 source_channels = [
@@ -12,25 +13,40 @@ source_channels = [
 ]
 
 destination_channel = "@AAUCentral"
-# create client session
+
+# ===== TELEGRAM CLIENT =====
 client = TelegramClient("session", api_id, api_hash)
 
-# connect
+# ===== START CLIENT =====
 client.start()
 
 print("🚀 USER CLIENT RUNNING...")
 
-# detect new posts
+# ===== DUPLICATE PROTECTION =====
+copied_messages = set()
+
+# ===== DETECT NEW POSTS =====
 @client.on(events.NewMessage(chats=source_channels))
 async def handler(event):
 
     message = event.message
 
+    message_id = message.id
+    message_text = message.text
+
+    unique_key = f"{message_id}_{message_text}"
+
+    if unique_key in copied_messages:
+        print("⚠ Duplicate skipped")
+        return
+
+    copied_messages.add(unique_key)
+
     print("🔥 NEW MESSAGE DETECTED")
 
     try:
         await client.send_message(destination_channel, message)
-        print("✅ Message forwarded")
+        print("✅ Message copied to destination channel")
 
     except Exception as e:
         print("❌ Error:", e)
