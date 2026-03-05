@@ -12,39 +12,28 @@ source_channels = [
 ]
 
 destination_channel = "@AAUCentral"
-
-# ===== MEMORY FOR DUPLICATES =====
-processed_messages = set()
-
-# ===== TELEGRAM CLIENT =====
+# create client session
 client = TelegramClient("session", api_id, api_hash)
 
+# connect
+client.start()
+
+print("🚀 USER CLIENT RUNNING...")
+
+# detect new posts
 @client.on(events.NewMessage(chats=source_channels))
-async def repost(event):
+async def handler(event):
 
-    message_id = event.message.id
-    chat_id = event.chat_id
-    unique_id = f"{chat_id}_{message_id}"
+    message = event.message
 
-    # Duplicate protection
-    if unique_id in processed_messages:
-        print("⚠ Duplicate skipped")
-        return
-
-    processed_messages.add(unique_id)
+    print("🔥 NEW MESSAGE DETECTED")
 
     try:
-        await client.send_message(
-            destination_channel,
-            event.message
-        )
-
-        print("✅ Message copied")
+        await client.send_message(destination_channel, message)
+        print("✅ Message forwarded")
 
     except Exception as e:
         print("❌ Error:", e)
 
-# ===== START CLIENT =====
-client.start()
-print("🚀 AUTO NEWS SYSTEM RUNNING...")
+
 client.run_until_disconnected()
