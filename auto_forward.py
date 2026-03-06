@@ -4,7 +4,6 @@ from telethon import TelegramClient, events
 api_id = 30133788         # your api_id
 api_hash = "1f2d2d024eaafe22909fbb1131e1f084" # your api_hash
 
-# ===== CHANNELS =====
 source_channels = [
     "@AAUMEREJA",
     "@AAU_GENERAL",
@@ -14,42 +13,73 @@ source_channels = [
 
 destination_channel = "@AAUCentral"
 
-# ===== TELEGRAM CLIENT =====
-client = TelegramClient("session", api_id, api_hash)
+# store duplicates
+posted_messages = set()
 
-# ===== START CLIENT =====
-client.start()
+client = TelegramClient("session", api_id, api_hash)
 
 print("🚀 USER CLIENT RUNNING...")
 
-# ===== DUPLICATE PROTECTION =====
-copied_messages = set()
+# -------- HANDLE PHOTO ALBUMS --------
+@client.on(events.Album(chats=source_channels))
+async def album_handler(event):
 
-# ===== DETECT NEW POSTS =====
-@client.on(events.NewMessage(chats=source_channels))
-async def handler(event):
+    album_id = event.grouped_id
 
-    message = event.message
-
-    message_id = message.id
-    message_text = message.text
-
-    unique_key = f"{message_id}_{message_text}"
-
-    if unique_key in copied_messages:
-        print("⚠ Duplicate skipped")
+    if album_id in posted_messages:
+        print("⚠ Duplicate album skipped")
         return
 
-    copied_messages.add(unique_key)
-
-    print("🔥 NEW MESSAGE DETECTED")
+    posted_messages.add(album_id)
 
     try:
-        await client.send_message(destination_channel, message)
-        print("✅ Message copied to destination channel")
+        files = [msg.media for msg in event.messages]
+
+        caption = ""
+        if event.messages[0].text:
+            caption = event.messages[0].text
+
+        await client.send_file(
+            destination_channel,
+            files,
+            caption=caption
+        )
+
+        print("📸 Album copied")
+
+    except Exception as e:
+        print("❌ Album error:", e)
+
+
+# -------- HANDLE NORMAL MESSAGES --------
+@client.on(events.NewMessage(chats=source_channels))
+async def message_handler(event):
+
+    message = event.message
+    text = message.text or ""
+
+    # unique key to detect duplicates
+    key = text.strip()
+
+    if key in posted_messages:
+        print("⚠ Duplicate text skipped")
+        return
+
+    posted_messages.add(key)
+
+    try:
+
+        if message.media:
+            await client.send_file(destination_channel, message.media, caption=text)
+
+        else:
+            await client.send_message(destination_channel, text)
+
+        print("✅ Message copied")
 
     except Exception as e:
         print("❌ Error:", e)
 
 
+client.start()
 client.run_until_disconnected()
