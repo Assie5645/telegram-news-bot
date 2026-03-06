@@ -103,6 +103,7 @@ async def handle_message(event):
 
     print("✅ Message forwarded with auto-delete duplicate")
 
+print("🚀 BOT STARTED — PRO VERSION")
 
 client.start()
 client.run_until_disconnected()
