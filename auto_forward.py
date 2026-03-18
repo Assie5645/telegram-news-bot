@@ -23,8 +23,7 @@ source_channels = [
 # ==========================
 destination_channel = "@AAUCentral"
 
-client = TelegramClient("session", api_id, api_hash)
-
+client = TelegramClient("railway_session", api_id, api_hash)
 # ==========================
 # 🛑 PERSISTENT DUPLICATE STORAGE
 # ==========================
