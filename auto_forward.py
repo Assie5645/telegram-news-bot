@@ -23,7 +23,11 @@ source_channels = [
 # ==========================
 destination_channel = "@AAUCentral"
 
-client = TelegramClient("railway_session", api_id, api_hash)
+from telethon.sessions import StringSession
+
+SESSION = "1BJWap1sBu0re5WoWyJVkIkiZdhwfqv9sqWyQBSYwTQKknVzC2helZHC-IoE53fDDJc3eemQPryodXj5_eXDQKJXXmSZTsxfeoP_kchWB34iAWVnVZGPAYp6gjmDCLpXhJrOlJTP-_G__XRxOJxMc8eco1HZODkXNyyWxBJWWpUpxMns3BvSyJ0mhqqpLQ_wOAj9CNOQlkNqQK5kXijGV0swWOurqMDp8PQd09_KtCv4vDv3bJAeibuca2SWeZt7YKvrpADvms9oEyA53OLHsbgqp4L2jjYgOwOIsajt4lzFxuE_2AZGBt8ntdd6JyqkZ3FzqBQMRp2A8WIFwBUgNX7HHU4i6GRo="
+
+client = TelegramClient(StringSession(SESSION), api_id, api_hash)
 # ==========================
 # 🛑 PERSISTENT DUPLICATE STORAGE
 # ==========================
