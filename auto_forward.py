@@ -25,7 +25,7 @@ destination_channel = "@AAUCentral"
 
 from telethon.sessions import StringSession
 
-SESSION = "1BJWap1sBu0re5WoWyJVkIkiZdhwfqv9sqWyQBSYwTQKknVzC2helZHC-IoE53fDDJc3eemQPryodXj5_eXDQKJXXmSZTsxfeoP_kchWB34iAWVnVZGPAYp6gjmDCLpXhJrOlJTP-_G__XRxOJxMc8eco1HZODkXNyyWxBJWWpUpxMns3BvSyJ0mhqqpLQ_wOAj9CNOQlkNqQK5kXijGV0swWOurqMDp8PQd09_KtCv4vDv3bJAeibuca2SWeZt7YKvrpADvms9oEyA53OLHsbgqp4L2jjYgOwOIsajt4lzFxuE_2AZGBt8ntdd6JyqkZ3FzqBQMRp2A8WIFwBUgNX7HHU4i6GRo="
+SESSION = "1BJWap1sBu1MxRTsmpLWMwkuL8yhXURnptSryrEOLLZLJRpxZc1EBxqQR7q9Xoza1K7eeWYhMUHrV8pMwMOzjxc2U1OAJJrSVAaP7OI-Vrm7DJ-pxObxa6i2sjxXe3gsH_e_TjFsVNyAWOGsx6d0d6iwFHhpTVWaytOaNOxGwHyMslVWdChG7xeVNEfDepbOQo9036296sEW5hsm9mK9p8y0fVzEzVMsAn-FRjgsiTSqiuF9ZHJ1BbPAfOe7O1uumnuePwBUbo01JllKIo60-ksoIrxnOrqQG7AyjfuU7H2KU6E4FRG2kEFsQXwDzSEuZdlfHidFFRw9LtxSLxOqstxZVKnliNDg="
 
 client = TelegramClient(StringSession(SESSION), api_id, api_hash)
 # ==========================
