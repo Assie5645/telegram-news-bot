@@ -132,5 +132,14 @@ async def handle_message(event):
 # ==========================
 # 🚀 RUN BOT
 # ==========================
-client.start()
-client.run_until_disconnected()
+import asyncio
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+async def main():
+    print("🚀 BOT STARTED — STABLE MODE")
+    await client.run_until_disconnected()
+
+with client:
+    client.loop.run_until_complete(main())
