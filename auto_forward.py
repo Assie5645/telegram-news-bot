@@ -1,76 +1,50 @@
-from telethon import TelegramClient, events
-from telethon.sessions import StringSession
-import json
 import os
 import asyncio
 import logging
+from telethon import TelegramClient, events
+from telethon.sessions import StringSession
 
-# ==========================
-# ⚙️ CONFIGURATION
-# ==========================
+# 1. Logging
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-api_id = 30133788
-api_hash = "1f2d2d024eaafe22909fbb1131e1f084" 
-SESSION_STRING = "1BJWap1sBuxAN1KcK2ytWjOSmjNffzwvqrs0f-MRoyiEsOLXk5SZ_2KHDmMPWhdEBwHdxTZfZxcU973exvMU2isI5SzuSKQmfl5gIsuWXeCnPzW_yGjJDoqq1BsEM-Wk1S_yGc0a5HMMCvuqppYC1dhtv1JKPDS-oalZl03wHHlb3P2YURlz91igl8UDran8adY0r9wuSofXgVx6bP8RK5txE0D_JH_MhImcR63NodM5sXGWbT1_3kQs4q-QjFIRM_J_DtMRSjorzxz91aVm_jC3TqNUZutp8cBDiaL3FnTDZwYoZQ0DG7UsvgnfYi0DLCwS5roFno3rX5mDAiSxfCexV5zrXdGU="
+# 2. Credentials
+API_ID = 30133788
+API_HASH = "1f2d2d024eaafe22909fbb1131e1f084" 
+# Use the Railway Variable Name here
+SESSION_STRING = os.getenv("1BJWap1sBuz0eX5jKsE92x8GY7ZSETG3RmZya3FODg-IbJKCda-avsFGr1ozSq8udtbv-cab7vi_gRUNNZlj6z_LzJEO6M1cF6yPRBDfoELphs7YDrj0HAlWCRYherPQUXN8yVil0Zk1Qovr_nuK6RCJLGg5XV7xtbtzpTLtt8JdQ0KB2P0wUIwkN9_MNGiFfuZzN6TLbRnWOtjzTGwpOFjTM0zPXAaMpFlBqt5VNlcnfCEskqavrHCVbx89W-IZpflwXj42QdKrkWQhAcMKSRB_1d_5nsQEDMTIbIKZ8I5LJRpxBx8P_DCTe26bGvrGndauh8FvOqwSJVe6l8uFkAfSjw36Ujeg=")
 
 source_channels = ["@AAUMEREJA", "@AAU_GENERAL", "@PECCAAiT", "@AAUNews11"]
 destination_channel = "@AAUCentral"
 
-# Initialize
-client = TelegramClient(StringSession(SESSION_STRING), api_id, api_hash)
-
-# ==========================
-# 🛑 DUPLICATE PROTECTION
-# ==========================
-DATA_FILE = "processed.json"
-processed_ids = {}
-
-if os.path.exists(DATA_FILE):
-    try:
-        with open(DATA_FILE, "r") as f: processed_ids = json.load(f)
-    except: pass
-
-def save_data():
-    with open(DATA_FILE, "w") as f: json.dump(processed_ids, f)
-
-# ==========================
-# 🔄 FORWARDING LOGIC
-# ==========================
-@client.on(events.Album(chats=source_channels))
-async def handle_album(event):
-    album_id = str(event.grouped_id)
-    if album_id in processed_ids: return 
-    
-    files = [msg.media for msg in event.messages]
-    caption = event.messages[0].text or ""
-    sent = await client.send_file(destination_channel, files, caption=caption)
-    
-    processed_ids[album_id] = sent.id
-    save_data()
-    print("📸 Album Forwarded")
+# 3. Initialize without starting
+client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
 @client.on(events.NewMessage(chats=source_channels))
-async def handle_message(event):
+async def handler(event):
     if event.message.grouped_id: return
-    unique_key = f"{event.chat_id}_{event.message.id}"
-    if unique_key in processed_ids: return
+    try:
+        await client.send_message(destination_channel, event.message)
+        logger.info("✅ Forwarded!")
+    except Exception as e:
+        logger.error(f"❌ Error: {e}")
 
-    if event.message.media:
-        sent = await client.send_file(destination_channel, event.message.media, caption=event.message.text)
-    else:
-        sent = await client.send_message(destination_channel, event.message.text)
-
-    processed_ids[unique_key] = sent.id
-    save_data()
-    print("✅ Message Forwarded")
-
-# ==========================
-# 🚀 START BOT
-# ==========================
 async def main():
-    print("🚀 BOT IS LIVE ON RAILWAY!")
+    # 🔥 THE DELAY: Wait 30 seconds for Railway to settle
+    logger.info("⏳ Container starting... waiting 30 seconds to clear old sessions...")
+    await asyncio.sleep(30)
+    
+    logger.info("📡 Attempting connection...")
+    await client.connect()
+    
+    if not await client.is_user_authorized():
+        logger.error("❌ SESSION EXPIRED! Generate a new string on your laptop.")
+        return
+
+    logger.info("🚀 BOT IS ONLINE AND STABLE!")
     await client.run_until_disconnected()
 
-with client:
-    client.loop.run_until_complete(main())
+if __name__ == '__main__':
+    # Run the loop manually instead of 'with client:'
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
