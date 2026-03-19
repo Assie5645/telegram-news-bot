@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 API_ID = 30133788
 API_HASH = "1f2d2d024eaafe22909fbb1131e1f084" 
 # Use the Railway Variable Name here
-SESSION_STRING = os.getenv("1BJWap1sBuz0eX5jKsE92x8GY7ZSETG3RmZya3FODg-IbJKCda-avsFGr1ozSq8udtbv-cab7vi_gRUNNZlj6z_LzJEO6M1cF6yPRBDfoELphs7YDrj0HAlWCRYherPQUXN8yVil0Zk1Qovr_nuK6RCJLGg5XV7xtbtzpTLtt8JdQ0KB2P0wUIwkN9_MNGiFfuZzN6TLbRnWOtjzTGwpOFjTM0zPXAaMpFlBqt5VNlcnfCEskqavrHCVbx89W-IZpflwXj42QdKrkWQhAcMKSRB_1d_5nsQEDMTIbIKZ8I5LJRpxBx8P_DCTe26bGvrGndauh8FvOqwSJVe6l8uFkAfSjw36Ujeg=")
+SESSION_STRING = os.getenv("TELEGRAM_SESSION")
 
 source_channels = ["@AAUMEREJA", "@AAU_GENERAL", "@PECCAAiT", "@AAUNews11"]
 destination_channel = "@AAUCentral"
